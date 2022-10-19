@@ -1,11 +1,15 @@
 // dependencies
 import { Typography, Box, TextField, Button } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { redirect } from "react-router-dom";
 
 // styles
 import Styles from "./Home.styles";
 
 const Home = () => {
+  const handleJoinGroupChat = () => {
+    redirect("chats");
+  };
   return (
     <Box component="div" sx={Styles.app}>
       <Typography variant="h4" sx={Styles.heading}>
@@ -30,6 +34,7 @@ const Home = () => {
             variant="contained"
             endIcon={<ArrowForwardIcon />}
             sx={Styles.joinBtn}
+            onClick={handleJoinGroupChat}
           >
             Join
           </Button>

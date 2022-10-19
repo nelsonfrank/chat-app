@@ -1,8 +1,18 @@
+//dependencies
+import { Routes, Route } from "react-router-dom";
+
 // components
 import Home from "./screens/home";
+import Chats from "./screens/chats";
+import ErrorScreen from "./screens/ErrorScreen";
 
 function App() {
-  return <Home />;
+  return (
+    <Routes>
+      <Route index element={<Home />} />
+      <Route path="chats" element={<Chats />} />
+    </Routes>
+  );
 }
 
 export default App;
