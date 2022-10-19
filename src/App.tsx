@@ -1,38 +1,18 @@
-import { useState } from "react";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
+//dependencies
+import { Routes, Route } from "react-router-dom";
+
+// components
+import Home from "./screens/home";
+import Chats from "./screens/chats";
+import ErrorScreen from "./screens/ErrorScreen";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        display: "flex",
-        height: "100vh",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <div className="App">
-        <h1>Hello World!</h1>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "1rem",
-          }}
-        >
-          <Button
-            variant="contained"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            count is {count}
-          </Button>
-        </div>
-      </div>
-    </Container>
+    <Routes>
+      <Route index element={<Home />} />
+      <Route path="chats" element={<Chats />} />
+      <Route path="*" element={<ErrorScreen />} />
+    </Routes>
   );
 }
 
