@@ -11,6 +11,7 @@ function App() {
     <Routes>
       <Route index element={<Home />} />
       <Route path="chats" element={<Chats />} />
+      <Route path="*" element={<ErrorScreen />} />
     </Routes>
   );
 }
