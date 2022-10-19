@@ -1,14 +1,16 @@
 // dependencies
 import { Typography, Box, TextField, Button } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // styles
 import Styles from "./Home.styles";
 
 const Home = () => {
+  const navigate = useNavigate();
+
   const handleJoinGroupChat = () => {
-    redirect("chats");
+    navigate("chats");
   };
   return (
     <Box component="div" sx={Styles.app}>
