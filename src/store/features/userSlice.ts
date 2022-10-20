@@ -18,11 +18,11 @@ const user = createSlice({
   initialState,
   reducers: {
     setUser: (store, action) => {
-      localStorage.setItem("userName", action.payload);
+      sessionStorage.setItem("userName", action.payload);
       store.user = { userName: action.payload };
     },
     getUser: (store) => {
-      const userName = localStorage.getItem("userName") || "";
+      const userName = sessionStorage.getItem("userName") || "";
       store.user = { userName };
     },
   },
