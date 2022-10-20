@@ -3,14 +3,18 @@ import { useState } from "react";
 import { Typography, Box, TextField, Button } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
 // styles
 import Styles from "./Home.styles";
+import { AppDispatch } from "../../store";
+import { setUser } from "../../store/features/userSlice";
 
 const Home = () => {
   const [userName, setUserName] = useState("");
   const [userNameFieldError, setUserNameError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleUsernameFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -29,7 +33,12 @@ const Home = () => {
       setUserNameError("Username must at least be 3 characters or more");
       return;
     }
-    navigate("chats");
+    setLoading(true);
+    dispatch(setUser(userName));
+    setTimeout(() => {
+      setLoading(false);
+      navigate("chats");
+    }, 1000);
   };
 
   return (
@@ -65,8 +74,9 @@ const Home = () => {
             endIcon={<ArrowForwardIcon />}
             sx={Styles.joinBtn}
             onClick={handleJoinGroupChat}
+            disabled={loading}
           >
-            Join
+            {loading ? "Joining..." : "Join"}
           </Button>
         </Box>
       </div>
