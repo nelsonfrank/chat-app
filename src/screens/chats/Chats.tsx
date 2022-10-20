@@ -149,7 +149,7 @@ const Chats = () => {
               width: "70%",
             }}
             value={msg}
-            onChange={(e) => handleMsgInputChange(e)}
+            onChange={handleMsgInputChange}
           />
           <div
             style={{

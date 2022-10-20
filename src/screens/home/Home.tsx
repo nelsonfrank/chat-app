@@ -1,4 +1,5 @@
 // dependencies
+import { useState } from "react";
 import { Typography, Box, TextField, Button } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useNavigate } from "react-router-dom";
@@ -7,11 +8,30 @@ import { useNavigate } from "react-router-dom";
 import Styles from "./Home.styles";
 
 const Home = () => {
+  const [userName, setUserName] = useState("");
+  const [userNameFieldError, setUserNameError] = useState("");
   const navigate = useNavigate();
 
+  const handleUsernameFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    event.preventDefault();
+    setUserName(event.target.value);
+  };
+
   const handleJoinGroupChat = () => {
+    if (userName === "") {
+      setUserNameError("Username is required");
+      return;
+    }
+
+    if (userName.length < 3) {
+      setUserNameError("Username must at least be 3 characters or more");
+      return;
+    }
     navigate("chats");
   };
+
   return (
     <Box component="div" sx={Styles.app}>
       <Typography variant="h4" sx={Styles.heading}>
@@ -31,7 +51,15 @@ const Home = () => {
             label="Username"
             variant="standard"
             sx={Styles.textField}
+            required
+            value={userName}
+            onChange={(e) => handleUsernameFieldChange(e)}
           />
+          {userNameFieldError.length > 0 && (
+            <span style={{ color: "red", fontSize: "14px" }}>
+              {userNameFieldError}
+            </span>
+          )}
           <Button
             variant="contained"
             endIcon={<ArrowForwardIcon />}
