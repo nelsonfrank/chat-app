@@ -25,9 +25,13 @@ const user = createSlice({
       const userName = sessionStorage.getItem("userName") || "";
       store.user = { userName };
     },
+    logUserOut: (store) => {
+      sessionStorage.removeItem("userName");
+      store.user = {};
+    },
   },
 });
 
-export const { setUser, getUser } = user.actions;
+export const { setUser, getUser, logUserOut } = user.actions;
 
 export default user.reducer;

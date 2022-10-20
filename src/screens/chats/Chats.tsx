@@ -18,7 +18,9 @@ import { useDispatch, useSelector } from "react-redux";
 // stores
 import { AppDispatch, RootState } from "../../store";
 import { addMessage, getMessages } from "../../store/features/messagesSlice";
-import { getUser } from "../../store/features/userSlice";
+import { getUser, logUserOut } from "../../store/features/userSlice";
+import { stringAvatar } from "../../Utils";
+
 const Chats = () => {
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
@@ -27,9 +29,20 @@ const Chats = () => {
   const { messages } = useSelector((state: RootState) => state.messages);
 
   useEffect(() => {
+    if (!user.userName) {
+      navigate("/");
+    }
+  }, []);
+
+  useEffect(() => {
     window.addEventListener("storage", () => {
       dispatch(getMessages());
     });
+    return () => {
+      window.removeEventListener("storage", () => {
+        dispatch(getMessages());
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -55,6 +68,11 @@ const Chats = () => {
     setMsg("");
     window.dispatchEvent(new Event("storage"));
   };
+
+  const handleLogout = () => {
+    dispatch(logUserOut());
+    navigate("/");
+  };
   return (
     <Box
       component="div"
@@ -63,6 +81,7 @@ const Chats = () => {
         flexDirection: "column",
         minHeight: "100vh",
         position: "relative",
+        width: "100%",
       }}
     >
       <Box
@@ -75,6 +94,7 @@ const Chats = () => {
           color: "#fff",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           padding: "0 0.25rem",
           position: "fixed",
           zIndex: 99999,
@@ -95,6 +115,26 @@ const Chats = () => {
           </Box>
           <Typography variant="h6">Group chat</Typography>
         </Stack>
+        <div
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: "5px",
+            margin: "0rem 0.5rem",
+          }}
+        >
+          <Button
+            variant="text"
+            sx={{
+              color: "#000",
+              backgroundColor: "#fff",
+              borderRadius: "5px",
+            }}
+            className="Button"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </div>
       </Box>
 
       {/* Chats display */}
@@ -139,7 +179,7 @@ const Chats = () => {
               component="div"
               sx={styles.chatContainerStyles}
             >
-              <Avatar sx={styles.chatAvatar}></Avatar>
+              <Avatar {...stringAvatar(item.userName ?? "")} />
               <Box component="div" sx={styles.chatMsg}>
                 <Typography variant="caption">{item.message}</Typography>
               </Box>
