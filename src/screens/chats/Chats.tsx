@@ -1,5 +1,5 @@
 // dependencies
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
 import {
   Box,
   Avatar,
@@ -13,18 +13,29 @@ import Groups2Icon from "@mui/icons-material/Groups2";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { grey, deepPurple } from "@mui/material/colors";
+import { useDispatch, useSelector } from "react-redux";
 
+// stores
+import { AppDispatch, RootState } from "../../store";
+import { addMessage, getMessages } from "../../store/features/messagesSlice";
+import { getUser } from "../../store/features/userSlice";
 const Chats = () => {
-  const [messages, setMessages] = useState([
-    {
-      recipient: "Hello",
-    },
-    {
-      sender: "Hi, How are you?",
-    },
-  ]);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.user);
+  const { messages } = useSelector((state: RootState) => state.messages);
+
+  useEffect(() => {
+    window.addEventListener("storage", () => {
+      dispatch(getMessages());
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch(getUser());
+    dispatch(getMessages());
+  }, [dispatch]);
 
   const handleMsgInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -34,18 +45,25 @@ const Chats = () => {
   };
 
   const handleSendMsg = () => {
-    setMessages((prevMsgs) => [
-      ...prevMsgs,
-      {
-        sender: msg,
-      },
-    ]);
+    dispatch(
+      addMessage({
+        userName: user.userName ?? "",
+        message: msg,
+        allMessages: messages,
+      })
+    );
     setMsg("");
+    window.dispatchEvent(new Event("storage"));
   };
   return (
     <Box
       component="div"
-      sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        position: "relative",
+      }}
     >
       <Box
         component="div"
@@ -58,6 +76,8 @@ const Chats = () => {
           display: "flex",
           alignItems: "center",
           padding: "0 0.25rem",
+          position: "fixed",
+          zIndex: 99999,
         }}
       >
         <Stack direction="row" spacing={3} alignItems="center">
@@ -78,22 +98,36 @@ const Chats = () => {
       </Box>
 
       {/* Chats display */}
-      <Box component="div" sx={{ flex: 1, padding: "1rem" }}>
-        {messages.map((message, index) => {
+      <Box
+        component="div"
+        sx={{
+          flex: 1,
+          padding: "1rem",
+          position: "relative",
+          right: 0,
+          left: 0,
+          bottom: "2rem",
+        }}
+      >
+        {messages.map((item, index) => {
           const styles = {
             chatContainerStyles: {
               display: "flex",
               alignItems: "center",
               gap: 1,
               margin: "2rem 0",
-              flexDirection: message.recipient ? "row" : "row-reverse",
+              flexDirection:
+                item.userName !== user.userName ? "row" : "row-reverse",
             },
             chatAvatar: {
-              bgcolor: message.recipient ? deepPurple[500] : grey[300],
+              bgcolor:
+                item.userName !== user.userName ? deepPurple[500] : grey[300],
+              zIndex: 9999,
             },
             chatMsg: {
-              bgcolor: message.recipient ? deepPurple[500] : grey[300],
-              color: message.recipient ? "#fff" : grey[600],
+              bgcolor:
+                item.userName !== user.userName ? deepPurple[500] : grey[300],
+              color: item.userName !== user.userName ? "#fff" : grey[600],
               padding: "0.25rem 0.75rem",
               borderRadius: "0.25rem",
             },
@@ -101,15 +135,13 @@ const Chats = () => {
 
           return (
             <Box
-              key={`${Object.keys(message)[0]}_${index + 1}`}
+              key={`${Object.keys(item)[0]}_${index + 1}`}
               component="div"
               sx={styles.chatContainerStyles}
             >
               <Avatar sx={styles.chatAvatar}></Avatar>
               <Box component="div" sx={styles.chatMsg}>
-                <Typography variant="caption">
-                  {message.recipient ? message.recipient : message.sender}
-                </Typography>
+                <Typography variant="caption">{item.message}</Typography>
               </Box>
             </Box>
           );
@@ -127,6 +159,9 @@ const Chats = () => {
           display: "flex",
           alignItems: "center",
           padding: "0 0.5rem",
+          position: "fixed",
+          zIndex: 99999,
+          bottom: 0,
         }}
       >
         <Stack
