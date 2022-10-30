@@ -13,7 +13,7 @@ This project developed using the following technology.
 - React-testing-library
 
 ## Demo
-- [Check live preview here]('https://warm-pasca-3c634c.netlify.app/)
+- Check live preview [here](https://warm-pasca-3c634c.netlify.app/)
 
 
 
